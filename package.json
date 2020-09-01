@@ -1,0 +1,31 @@
+{
+  "name": "stream-sound-level",
+  "version": "0.0.1",
+  "description": "Watch MediaStream sound level",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maruware/stream-sound-level.git"
+  },
+  "keywords": [
+    "MediaStream"
+  ],
+  "author": "maruware",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maruware/stream-sound-level/issues"
+  },
+  "homepage": "https://github.com/maruware/stream-sound-level#readme",
+  "devDependencies": {
+    "typescript": "^4.0.2"
+  }
+}
