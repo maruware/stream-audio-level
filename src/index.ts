@@ -1,14 +1,14 @@
 const AudioContext = window.AudioContext || window.webkitAudioContext
 
 type CalcFunction = (
-  bin: Uint8Array,
+  bin: Uint8Array | Float32Array,
   sampleRate: number,
   minHz: number | undefined,
   maxHz: number | undefined
 ) => number
 
 const averageFreqData: CalcFunction = (
-  bin: Uint8Array,
+  bin: Uint8Array | Float32Array,
   sampleRate: number,
   minHz: number | undefined,
   maxHz: number | undefined
@@ -34,7 +34,7 @@ const averageFreqData: CalcFunction = (
 }
 
 const maxFreqData: CalcFunction = (
-  bin: Uint8Array,
+  bin: Uint8Array | Float32Array,
   sampleRate: number,
   minHz: number | undefined,
   maxHz: number | undefined
@@ -62,6 +62,7 @@ interface WatchStreamAudioLevelOption {
   minHz?: number
   maxHz?: number
   calcMethod?: 'average' | 'max'
+  valueType?: 'byte' | 'float'
 }
 
 export const watchStreamAudioLevel = (
@@ -70,6 +71,7 @@ export const watchStreamAudioLevel = (
   opt?: WatchStreamAudioLevelOption
 ): (() => void) => {
   const calcMethod = opt && opt.calcMethod ? opt.calcMethod : 'average'
+  const valueType = opt && opt.valueType ? opt.valueType : 'byte'
 
   const audioContext = new AudioContext()
   const analyser = audioContext.createAnalyser()
@@ -85,12 +87,22 @@ export const watchStreamAudioLevel = (
 
   const calcF = calcMethod === 'average' ? averageFreqData : maxFreqData
 
+  const getFreqData = () => {
+    if (valueType === 'byte') {
+      const bin = new Uint8Array(analyser.frequencyBinCount)
+      analyser.getByteFrequencyData(bin)
+      return bin
+    }
+    const bin = new Float32Array(analyser.frequencyBinCount)
+    analyser.getFloatFrequencyData(bin)
+    return bin
+  }
+
   const handler = () => {
-    const fftBin = new Uint8Array(analyser.frequencyBinCount)
-    analyser.getByteFrequencyData(fftBin)
+    const bin = getFreqData()
 
     const v = calcF(
-      fftBin,
+      bin,
       audioContext.sampleRate,
       opt && opt.minHz,
       opt && opt.maxHz
