@@ -58,7 +58,7 @@ const maxFreqData: CalcFunction = (
   return maxVal
 }
 
-interface WatchStreamAudioLevelOption {
+export interface WatchStreamAudioLevelOption {
   minHz?: number
   maxHz?: number
   calcMethod?: 'average' | 'max'
