@@ -63,6 +63,8 @@ export interface WatchStreamAudioLevelOption {
   maxHz?: number
   calcMethod?: 'average' | 'max'
   valueType?: 'byte' | 'float'
+  smoothingTimeConstant?: number
+  fftSize?: number
 }
 
 export const watchStreamAudioLevel = (
@@ -70,16 +72,16 @@ export const watchStreamAudioLevel = (
   onUpdate: (v: number) => void,
   opt?: WatchStreamAudioLevelOption
 ): (() => void) => {
-  const calcMethod = opt && opt.calcMethod ? opt.calcMethod : 'average'
-  const valueType = opt && opt.valueType ? opt.valueType : 'byte'
+  const calcMethod = (opt && opt.calcMethod) || 'average'
+  const valueType = (opt && opt.valueType) || 'byte'
 
   const audioContext = new AudioContext()
   const analyser = audioContext.createAnalyser()
   const mediaStreamSource = audioContext.createMediaStreamSource(stream)
   const processor = audioContext.createScriptProcessor(2048, 1, 1)
 
-  analyser.smoothingTimeConstant = 0.1
-  analyser.fftSize = 512
+  analyser.smoothingTimeConstant = (opt && opt.smoothingTimeConstant) || 0.1
+  analyser.fftSize = (opt && opt.fftSize) || 512
 
   mediaStreamSource.connect(analyser)
   analyser.connect(processor)
