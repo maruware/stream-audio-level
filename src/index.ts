@@ -1,5 +1,3 @@
-const AudioContext = window.AudioContext || window.webkitAudioContext
-
 type CalcFunction = (
   bin: Uint8Array | Float32Array,
   sampleRate: number,
@@ -75,6 +73,7 @@ export const watchStreamAudioLevel = (
   const calcMethod = (opt && opt.calcMethod) || 'average'
   const valueType = (opt && opt.valueType) || 'byte'
 
+  const AudioContext = window.AudioContext || window.webkitAudioContext
   const audioContext = new AudioContext()
   const analyser = audioContext.createAnalyser()
   const mediaStreamSource = audioContext.createMediaStreamSource(stream)
